@@ -83,6 +83,37 @@ def self.find(id)
  
 end
 
+def self.find_or_create_by(name:, breed:)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE name = ?
+      AND breed = ?
+      LIMIT 1
+    SQL
+
+    row = DB[:conn].execute(sql, name, breed).first
+
+    if row
+      self.new_from_db(row)
+    else
+      self.create(name: name, breed: breed)
+    end
+
+end
+
+def update
+    sql = <<-SQL
+      UPDATE dogs 
+      SET 
+        name = ?, 
+        breed = ?  
+      WHERE id = ?;
+    SQL
+    
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
 
 
 end
